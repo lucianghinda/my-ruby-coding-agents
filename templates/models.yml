@@ -39,3 +39,12 @@ strong:
   claude:
     model: opus
     effort: high
+
+review:
+  summary: pull request review
+  codex:
+    model: gpt-6.1-sol
+    effort: medium
+  claude:
+    model: opus
+    effort: medium

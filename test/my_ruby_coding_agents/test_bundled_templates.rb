@@ -10,7 +10,7 @@ class TestBundledTemplates < Minitest::Test
   end
 
   def test_every_bundled_agent_renders_for_both_tools
-    assert_equal 10, @paths.length
+    assert_equal 12, @paths.length
     @paths.each do |path|
       agent = MyRubyCodingAgents::Agent.load(path, models: @models)
       assert_includes MyRubyCodingAgents::Renderers.codex(agent), "model = \"#{agent.codex_model}\""

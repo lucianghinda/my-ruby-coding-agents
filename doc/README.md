@@ -128,10 +128,22 @@ effort, and description:
 rails_explorer | fast | Codex: gpt-6-luna (low) | Claude: sonnet (low) | Trace a Ruby workflow ...
 ```
 
-The ten agents are `rails_explorer`, `contract_mapper`, `test_designer`,
+The twelve agents are `rails_explorer`, `contract_mapper`, `test_designer`,
 `rails_implementer`, `api_cli_implementer`, `evidence_reviewer`,
-`quality_investigator`, `ui_implementer`, `security_mapper`, and
-`security_reviewer`.
+`quality_investigator`, `ui_implementer`, `security_mapper`,
+`security_reviewer`, `code_archaeologist`, and `pr_readiness_checker`.
+
+`code_archaeologist` researches how and why part of the code works and writes
+what it finds into `docs/archaeology/`, one note per topic plus an index. On
+later runs it re-checks existing notes against the code and updates or marks
+them stale instead of adding duplicates. Its tool list includes `Write` and
+`Edit`, so the folder limit is an instruction, not a fence. Add a permission
+rule in your tool's settings if you want to enforce it.
+
+`pr_readiness_checker` uses the `gh` CLI to read open pull requests on a public
+repository and reports which are ready to merge, which need changes from the
+contributor, and which need a decision from you. It never merges, labels, or
+posts comments. Run it from a checkout where `gh auth status` succeeds.
 
 Use the generated delegation guide to choose a focused agent for independent
 work. Handle small, coupled tasks yourself; parallelize independent bounded
@@ -141,7 +153,7 @@ work. The names `rails_explorer` and `rails_implementer` also cover standalone
 Ruby projects; the fleet keeps the same names across projects.
 
 Models come from a tier table in `templates/models.yml`. Each tier (`fast`,
-`investigate`, `implement`, `strong`) sets a model and reasoning effort for
+`investigate`, `implement`, `strong`, `review`) sets a model and reasoning effort for
 Codex and for Claude, and each agent template names one tier with `tier:`.
 Edit `templates/models.yml` to change routing; it is the one place model names
 live. The installer builds the model sentence in the delegation guide from the

@@ -1,3 +1,12 @@
+## [Unreleased]
+
+- Add `code_archaeologist`, which researches part of a codebase and keeps
+  notes in `docs/archaeology/`, and `pr_readiness_checker`, which checks whether open
+  pull requests on a public repository are ready to merge, using `gh`, and
+  reports without posting.
+- Add the `review` model tier (Codex gpt-6.1-sol medium, Claude opus medium)
+  for `pr_readiness_checker`.
+
 ## [0.1.0] - 2026-10-30
 
 First release.

@@ -20,6 +20,8 @@ When independent work would benefit from a subagent, use the role that matches t
 - `ui_implementer`: implement interface changes using project design guidance.
 - `security_mapper`: map security-sensitive flows and trust boundaries.
 - `security_reviewer`: review changes for security defects.
+- `code_archaeologist`: research how part of the code works and record it in `docs/archaeology/`.
+- `pr_readiness_checker`: check whether open pull requests on a public repository are ready to merge; it reports and never posts.
 
 Rules:
 - Model assignments are starting points. {{model_routing}} For ambiguous tasks or inadequate results, the lead should narrow the task or use a stronger available model rather than repeat the same unsuccessful approach. This gem installs defaults; it does not select models at runtime.
