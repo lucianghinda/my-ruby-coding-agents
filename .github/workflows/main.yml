@@ -31,9 +31,10 @@ jobs:
       - name: Run the default task
         run: bundle exec rake
       - name: Analyze decision coverage
-        run: >
-          bundle exec branchproof analyze "lib/**/*.rb" --project ruby --framework minitest
-          --format json --output .branchproof/coverage.json
+        run: |
+          mkdir -p .branchproof
+          bundle exec branchproof analyze "lib/**/*.rb" --project ruby --framework minitest \
+          --format json --output .branchproof/coverage.json \
           --minimum decision=100 --minimum mcdc=100 --minimum decision_table=100
       - name: Report decision coverage
         if: always() && hashFiles('.branchproof/coverage.json') != ''
