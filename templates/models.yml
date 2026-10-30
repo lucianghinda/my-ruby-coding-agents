@@ -1,0 +1,41 @@
+# Model tiers for the bundled agents.
+# Each agent template names one tier with `tier:`. Edit this file to change
+# which model and reasoning effort every agent in a tier uses.
+# Every tier needs `summary`, `codex`, and `claude`; each tool needs `model`
+# and `effort`. Other keys are rejected.
+
+fast:
+  summary: quick read-only lookups
+  codex:
+    model: gpt-6-luna
+    effort: low
+  claude:
+    model: sonnet
+    effort: low
+
+investigate:
+  summary: focused investigation and test design
+  codex:
+    model: gpt-6-luna
+    effort: medium
+  claude:
+    model: sonnet
+    effort: medium
+
+implement:
+  summary: scoped implementation
+  codex:
+    model: gpt-6.1-terra
+    effort: medium
+  claude:
+    model: sonnet
+    effort: medium
+
+strong:
+  summary: security review
+  codex:
+    model: gpt-6.1-sol
+    effort: high
+  claude:
+    model: opus
+    effort: high

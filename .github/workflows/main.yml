@@ -1,0 +1,40 @@
+name: Ruby
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Ruby ${{ matrix.ruby }}
+    strategy:
+      matrix:
+        ruby:
+          - '4.0'
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+      - name: Run the default task
+        run: bundle exec rake
+      - name: Analyze decision coverage
+        run: >
+          bundle exec branchproof analyze "lib/**/*.rb" --project ruby --framework minitest
+          --format json --output .branchproof/coverage.json
+          --minimum decision=100 --minimum mcdc=100 --minimum decision_table=100
+      - name: Report decision coverage
+        if: always() && hashFiles('.branchproof/coverage.json') != ''
+        run: bundle exec branchproof report .branchproof/coverage.json --format github --top 10

@@ -1,0 +1,10 @@
+/_yardoc/
+/.branchproof/
+/.bundle/
+/.yardoc
+/*.gem
+/coverage/
+/Gemfile.lock
+/pkg/
+/spec/reports/
+/tmp/
