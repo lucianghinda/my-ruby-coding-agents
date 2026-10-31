@@ -1,0 +1,6 @@
+inherit_from: ../../.rubocop.yml
+
+# The hook script runs with whatever `ruby` is on PATH when a hook fires,
+# so it stays compatible with older Rubies.
+AllCops:
+  TargetRubyVersion: 2.6

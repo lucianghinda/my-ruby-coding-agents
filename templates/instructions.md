@@ -22,9 +22,11 @@ When independent work would benefit from a subagent, use the role that matches t
 - `security_reviewer`: review changes for security defects.
 - `code_archaeologist`: research how part of the code works and record it in `docs/archaeology/`.
 - `pr_readiness_checker`: check whether open pull requests on a public repository are ready to merge; it reports and never posts.
+- `advisor`: consult before implementing on architecture tradeoffs, ambiguous requirements, unexplained bugs, and changes that touch correctness, concurrency, or security. It reads only and answers a focused question. Consult it once more before declaring such a change done; it is not a line-by-line reviewer.
 
 Rules:
 - Model assignments are starting points. {{model_routing}} For ambiguous tasks or inadequate results, the lead should narrow the task or use a stronger available model rather than repeat the same unsuccessful approach. This gem installs defaults; it does not select models at runtime.
 - An implementer may add or update tests for their change. For consequential changes, arrange an independent review rather than requiring a separate agent to author every test.
 - No two agents edit the same files at the same time. Give each agent a specific task and review its evidence.
 - Start every sub-agent with a fresh context window.
+- Do not consult `advisor` for routine implementation, simple refactoring, or straightforward fixes. When you do, ask one focused question with the relevant context and wait for its recommendation before proceeding.

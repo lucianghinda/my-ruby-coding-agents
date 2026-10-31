@@ -48,3 +48,12 @@ review:
   claude:
     model: opus
     effort: medium
+
+advise:
+  summary: consultation before high-stakes decisions
+  codex:
+    model: gpt-6-astra
+    effort: medium
+  claude:
+    model: fable
+    effort: medium

@@ -33,3 +33,13 @@ Branchproof::RakeTask.new(:branchproof) do |task|
 end
 
 task default: %i[test rubocop]
+
+desc "Render the advisor agent files inside plugins/advisor from the bundled template"
+task :plugins do
+  require_relative "lib/my_ruby_coding_agents"
+  models = MyRubyCodingAgents::Templates.models
+  path = File.join(MyRubyCodingAgents::Templates::AGENTS_DIR, "advisor.md")
+  agent = MyRubyCodingAgents::Agent.load(path, models:)
+  File.write(File.join(ROOT, "plugins/advisor/agents/advisor.md"), MyRubyCodingAgents::Renderers.claude(agent))
+  File.write(File.join(ROOT, "plugins/advisor/agents/advisor.toml"), MyRubyCodingAgents::Renderers.codex(agent))
+end

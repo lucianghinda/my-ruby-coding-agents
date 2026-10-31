@@ -1,0 +1,11 @@
+{
+  "name": "my-ruby-coding-agents",
+  "owner": { "name": "Lucian Ghinda" },
+  "plugins": [
+    {
+      "name": "advisor",
+      "source": "./plugins/advisor",
+      "description": "Consult a stronger read-only model at checkpoints: before a major decision, when stuck, and before declaring a change done."
+    }
+  ]
+}

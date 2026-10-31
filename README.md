@@ -128,10 +128,10 @@ effort, and description:
 rails_explorer | fast | Codex: gpt-6-luna (low) | Claude: sonnet (low) | Trace a Ruby workflow ...
 ```
 
-The twelve agents are `rails_explorer`, `contract_mapper`, `test_designer`,
+The thirteen agents are `rails_explorer`, `contract_mapper`, `test_designer`,
 `rails_implementer`, `api_cli_implementer`, `evidence_reviewer`,
 `quality_investigator`, `ui_implementer`, `security_mapper`,
-`security_reviewer`, `code_archaeologist`, and `pr_readiness_checker`.
+`security_reviewer`, `code_archaeologist`, `pr_readiness_checker`, and `advisor`.
 
 `code_archaeologist` researches how and why part of the code works and writes
 what it finds into `docs/archaeology/`, one note per topic plus an index. On
@@ -145,6 +145,15 @@ repository and reports which are ready to merge, which need changes from the
 contributor, and which need a decision from you. It never merges, labels, or
 posts comments. Run it from a checkout where `gh auth status` succeeds.
 
+`advisor` is a read-only consultant for decisions before implementation:
+architecture tradeoffs, ambiguous requirements, a bug that stays unexplained
+after investigation, or changes that touch correctness, concurrency, or
+security. It uses the strongest models (Codex gpt-6-astra, Claude fable) at
+medium effort, so the delegation guide tells the lead not to call it for
+routine implementation, simple refactoring, or straightforward fixes. An
+advisor helps decide before the work; a reviewer judges finished work. Keep
+the roles separate to avoid needless calls to the expensive model.
+
 Use the generated delegation guide to choose a focused agent for independent
 work. Handle small, coupled tasks yourself; parallelize independent bounded
 tasks when the benefit outweighs coordination and token costs. Implementers
@@ -153,7 +162,7 @@ work. The names `rails_explorer` and `rails_implementer` also cover standalone
 Ruby projects; the fleet keeps the same names across projects.
 
 Models come from a tier table in `templates/models.yml`. Each tier (`fast`,
-`investigate`, `implement`, `strong`, `review`) sets a model and reasoning effort for
+`investigate`, `implement`, `strong`, `review`, `advise`) sets a model and reasoning effort for
 Codex and for Claude, and each agent template names one tier with `tier:`.
 Edit `templates/models.yml` to change routing; it is the one place model names
 live. The installer builds the model sentence in the delegation guide from the
@@ -162,6 +171,17 @@ same table, so the guide, the agent files, and `list` always agree.
 Model assignments are starting points, not benchmark-proven rankings. The lead
 narrows ambiguous or unsuccessful tasks or uses a stronger available model;
 there is no automatic model router.
+
+## Plugins
+
+`plugins/advisor` is a plugin for Claude Code and Codex that turns the `advisor`
+agent into a workflow. With `/advisor` on, the lead agent writes a briefing and
+consults the advisor at four checkpoints: before a major decision, when stuck,
+before declaring a change done, and on request. Hooks mark pending edits, log
+each consult to `.advisor/log.md`, and nudge once when a turn ends with edits
+nobody consulted on. See [plugins/advisor/README.md](plugins/advisor/README.md)
+for install steps. `bundle exec rake plugins` re-renders the plugin's agent
+files from `templates/agents/advisor.md`.
 
 ## Development
 

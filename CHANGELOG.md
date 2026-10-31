@@ -1,4 +1,4 @@
-## [Unreleased]
+## [0.2.0] - 2026-10-31
 
 - Add `code_archaeologist`, which researches part of a codebase and keeps
   notes in `docs/archaeology/`, and `pr_readiness_checker`, which checks whether open
@@ -6,6 +6,12 @@
   reports without posting.
 - Add the `review` model tier (Codex gpt-6.1-sol medium, Claude opus medium)
   for `pr_readiness_checker`.
+- Add `advisor`, a read-only consultant for decisions before implementation,
+  and the `advise` model tier (Codex gpt-6-astra medium, Claude fable medium)
+  it uses. The delegation guide says when to consult it and when not to.
+- Add `plugins/advisor`, a plugin for Claude Code and Codex with an `/advisor`
+  skill, hooks, and a briefing template, so the lead consults the advisor at
+  checkpoints and gets a nudge when it declares work done without one.
 
 ## [0.1.0] - 2026-10-30
 

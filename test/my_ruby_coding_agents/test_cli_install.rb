@@ -66,7 +66,7 @@ class TestCLIInstall < Minitest::Test
     run_cli("install", @dir)
     code, out, = run_cli("status", @dir)
     assert_equal 0, code
-    assert_equal 26, out.lines.length
+    assert_equal 28, out.lines.length
     assert out.lines.all? { |line| line.start_with?("up to date ") }, out
   end
 

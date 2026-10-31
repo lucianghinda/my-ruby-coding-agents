@@ -36,7 +36,7 @@ class TestCLI < Minitest::Test
     assert_equal 0, code
     assert_includes out, "rails_explorer | fast | Codex: gpt-6-luna (low) | Claude: sonnet (low) | Trace "
     assert_includes out, "security_reviewer | strong | Codex: gpt-6.1-sol (high) | Claude: opus (high) | "
-    assert_equal 12, out.lines.length
+    assert_equal 13, out.lines.length
   end
 
   def test_install_help_lists_install_options_and_writes_nothing
