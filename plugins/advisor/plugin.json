@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "advisor",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Consult a stronger read-only model at checkpoints: before a major decision, when stuck, and before declaring a change done.",
   "license": "MIT",
   "repository": "https://github.com/lucianghinda/my-ruby-coding-agents",

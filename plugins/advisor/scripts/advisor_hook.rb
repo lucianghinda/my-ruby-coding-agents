@@ -15,6 +15,7 @@
 
 require "json"
 require "fileutils"
+require "open3"
 require "time"
 
 # Reads and writes the files in .advisor/.
@@ -43,7 +44,8 @@ class AdvisorState
   def read
     return DEFAULTS.dup unless File.file?(state_path)
 
-    DEFAULTS.merge(JSON.parse(File.read(state_path)))
+    parsed = JSON.parse(File.read(state_path))
+    parsed.is_a?(Hash) ? DEFAULTS.merge(parsed) : DEFAULTS.dup
   rescue JSON::ParserError
     DEFAULTS.dup
   end
@@ -78,7 +80,7 @@ class AdvisorState
   # Counts a consult, remembers the advisor id, logs its answer, and clears pending edits.
   def record_consult(agent_type, agent_id, message)
     state = read
-    state["consults"] = state["consults"].to_i + 1
+    state["consults"] = state["consults"].to_s.to_i + 1
     state["advisor_agent_id"] = agent_id unless agent_id.to_s.empty?
     state["last_consult_at"] = Time.now.utc.iso8601
     write(state)
@@ -92,6 +94,7 @@ class AdvisorState
 end
 
 # Runs one hook event or one skill command.
+# rubocop:disable Metrics/ClassLength
 class AdvisorHook
   EVENTS = %w[session_start post_tool_use subagent_stop stop].freeze
   NUDGE = "[Advisor] Files changed in this turn without an advisor consult. Run the pre-completion " \
@@ -143,9 +146,13 @@ class AdvisorHook
   end
 
   def subagent_stop
-    return unless @state.enabled? && @input["agent_type"].to_s.include?("advisor")
+    return unless @state.enabled? && advisor_agent?(@input["agent_type"])
 
     @state.record_consult(@input["agent_type"], @input["agent_id"], @input["last_assistant_message"])
+  end
+
+  def advisor_agent?(agent_type)
+    agent_type.to_s.match?(/\A(?:advisor|[^:]+:advisor)\z/)
   end
 
   # Nudges once per batch of edits when the turn ends without a consult.
@@ -203,17 +210,25 @@ class AdvisorHook
   end
 
   # Keeps .advisor/ out of commits without touching the tracked .gitignore.
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def exclude_from_git
-    info = File.join(Dir.pwd, ".git", "info")
-    return unless File.directory?(File.join(Dir.pwd, ".git"))
+    path, status = Open3.capture2("git", "-C", Dir.pwd, "rev-parse", "--git-path", "info/exclude", err: File::NULL)
+    return unless status.success?
 
-    FileUtils.mkdir_p(info)
-    exclude = File.join(info, "exclude")
+    exclude = File.expand_path(path.strip, Dir.pwd)
+    FileUtils.mkdir_p(File.dirname(exclude))
     lines = File.file?(exclude) ? File.readlines(exclude, chomp: true) : []
     return if lines.include?("#{AdvisorState::DIR}/")
 
-    File.open(exclude, "a") { |f| f.puts "#{AdvisorState::DIR}/" }
+    File.open(exclude, "a") do |file|
+      file.write("\n") if File.size?(exclude) && !File.binread(exclude).end_with?("\n")
+      file.puts "#{AdvisorState::DIR}/"
+    end
+  rescue Errno::ENOENT
+    # Advisor remains usable if Git is not installed.
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 end
+# rubocop:enable Metrics/ClassLength
 
 exit AdvisorHook.run(ARGV) if $PROGRAM_NAME == __FILE__

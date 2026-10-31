@@ -6,6 +6,7 @@ require "open3"
 require "tmpdir"
 
 # Drives the advisor hook script through one session.
+# rubocop:disable Metrics/ClassLength
 class TestAdvisorHook < Minitest::Test
   SCRIPT = File.expand_path("../../plugins/advisor/scripts/advisor_hook.rb", __dir__)
 
@@ -20,12 +21,82 @@ class TestAdvisorHook < Minitest::Test
 
   def test_enable_writes_state_and_excludes_the_folder_from_git
     Dir.mktmpdir do |dir|
-      Dir.mkdir(File.join(dir, ".git"))
+      git(dir, "init", "-q")
       assert_includes command(dir, "enable"), "Advisor mode on"
-      assert_equal ".advisor/\n", File.read(File.join(dir, ".git/info/exclude"))
+      exclude = git(dir, "rev-parse", "--git-path", "info/exclude").strip
+      assert_includes File.read(File.expand_path(exclude, dir)), ".advisor/"
       assert_includes hook(dir, "session_start"), "Advisor mode is on"
       command(dir, "disable")
       refute File.exist?(File.join(dir, ".advisor"))
+    end
+  end
+
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+  def test_enable_excludes_advisor_state_in_a_git_worktree
+    skip "git is unavailable" unless system("git", "--version", out: File::NULL, err: File::NULL)
+
+    Dir.mktmpdir do |dir|
+      repo = File.join(dir, "repo")
+      worktree = File.join(dir, "worktree")
+      Dir.mkdir(repo)
+      git(repo, "init", "-q")
+      git(repo, "-c", "user.name=Test", "-c", "user.email=test@example.com", "commit", "--allow-empty", "-qm",
+          "initial")
+      git(repo, "worktree", "add", "-q", "-b", "advisor-test", worktree)
+
+      command(worktree, "enable")
+
+      exclude = git(worktree, "rev-parse", "--git-path", "info/exclude").strip
+      exclude = File.expand_path(exclude, worktree)
+      assert_includes File.read(exclude), ".advisor/"
+      assert_equal "", git(worktree, "status", "--short").strip
+    end
+  end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+
+  def test_enable_preserves_exclude_content_without_a_trailing_newline
+    Dir.mktmpdir do |dir|
+      git(dir, "init", "-q")
+      exclude = git(dir, "rev-parse", "--git-path", "info/exclude").strip
+      exclude = File.expand_path(exclude, dir)
+      File.write(exclude, "existing-pattern")
+
+      command(dir, "enable")
+
+      assert_equal "existing-pattern\n.advisor/\n", File.read(exclude)
+    end
+  end
+
+  def test_enable_does_not_crash_when_git_is_unavailable_or_directory_is_not_a_repo
+    Dir.mktmpdir do |dir|
+      out, status = Open3.capture2({ "PATH" => "" }, RbConfig.ruby, SCRIPT, "enable", chdir: dir)
+      assert status.success?, out
+      assert File.file?(File.join(dir, ".advisor/state.json"))
+    end
+  end
+
+  def test_status_recovers_from_valid_json_with_the_wrong_shape
+    Dir.mktmpdir do |dir|
+      FileUtils.mkdir_p(File.join(dir, ".advisor"))
+      File.write(File.join(dir, ".advisor/state.json"), "[]")
+
+      status = command(dir, "status")
+
+      assert_includes status, "enabled: false"
+      assert_includes status, "consults: 0"
+    end
+  end
+
+  def test_consult_recovers_from_an_invalid_counter_in_state
+    enabled_with_pending_edit do |dir|
+      path = File.join(dir, ".advisor/state.json")
+      state = JSON.parse(File.read(path)).merge("consults" => [])
+      File.write(path, JSON.generate(state))
+
+      hook(dir, "subagent_stop", "agent_type" => "advisor", "agent_id" => "a1")
+
+      assert_includes command(dir, "status"), "consults: 1"
+      refute pending?(dir)
     end
   end
 
@@ -48,6 +119,32 @@ class TestAdvisorHook < Minitest::Test
       assert_includes status, "consults: 1"
       assert_includes status, "advisor_agent_id: a1"
       assert_includes File.read(File.join(dir, ".advisor/log.md")), "Verdict: go."
+    end
+  end
+
+  def test_substring_match_on_non_advisor_agent_does_not_count_as_consult
+    enabled_with_pending_edit do |dir|
+      hook(dir, "subagent_stop", "agent_type" => "rails-advisor-reviewer", "agent_id" => "a1",
+                                 "last_assistant_message" => "Not the advisor.")
+      assert pending?(dir)
+      assert_includes command(dir, "status"), "consults: 0"
+    end
+  end
+
+  def test_namespaced_advisor_agent_counts_as_consult
+    enabled_with_pending_edit do |dir|
+      hook(dir, "subagent_stop", "agent_type" => "plugin:advisor", "agent_id" => "a1",
+                                 "last_assistant_message" => "Verdict: go.")
+      refute pending?(dir)
+      assert_includes command(dir, "status"), "consults: 1"
+    end
+  end
+
+  def test_shell_tool_use_marks_pending
+    Dir.mktmpdir do |dir|
+      command(dir, "enable")
+      hook(dir, "post_tool_use", "tool_name" => "Bash")
+      assert pending?(dir)
     end
   end
 
@@ -104,4 +201,11 @@ class TestAdvisorHook < Minitest::Test
     assert status.success?, out
     out
   end
+
+  def git(dir, *args)
+    out, status = Open3.capture2("git", "-C", dir, *args)
+    assert status.success?, out
+    out
+  end
 end
+# rubocop:enable Metrics/ClassLength

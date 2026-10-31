@@ -1,3 +1,17 @@
+## [0.3.0] - 2026-10-31
+
+- Resolve advisor Git exclusions in linked worktrees and preserve existing
+  exclusion entries without a trailing newline.
+- Track shell tools as potential advisor edits, match advisor identities
+  exactly (including plugin namespaces), and recover from malformed state.
+- Make supplied history evidence explicit in advisor briefings while keeping
+  the advisor's restricted tools.
+- Add focused Rails risk checks to existing implementation, test, quality,
+  and security roles, with version and adapter checks.
+- Bump the advisor plugin to 0.1.1 so Codex refreshes its cached copy.
+- Add three static Rails review tasks and retain measured plain-prompt versus
+  role-template results, scoring criteria, and raw responses.
+
 ## [0.2.0] - 2026-10-31
 
 - Add `code_archaeologist`, which researches part of a codebase and keeps

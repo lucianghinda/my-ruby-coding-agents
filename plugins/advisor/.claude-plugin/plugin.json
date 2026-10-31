@@ -1,6 +1,6 @@
 {
   "name": "advisor",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Consult a stronger read-only model at checkpoints: before a major decision, when stuck, and before declaring a change done.",
   "author": { "name": "Lucian Ghinda" },
   "repository": "https://github.com/lucianghinda/my-ruby-coding-agents",
