@@ -1,0 +1,20 @@
+[
+  {
+    "id": "tenant_documents",
+    "fixture": "evaluation/fixtures/tenant_documents.rb",
+    "role": "templates/agents/security_reviewer.md",
+    "request": "Review this document endpoint before release. Identify concrete defects that violate the stated account boundary, explain the smallest fixes, and propose focused regression checks. Work read-only. Treat the fixture's assumptions as the entire relevant application context."
+  },
+  {
+    "id": "invoice_job",
+    "fixture": "evaluation/fixtures/invoice_job.rb",
+    "role": "templates/agents/rails_implementer.md",
+    "request": "Review this invoice charging job before release. Identify concrete correctness defects, explain the smallest fixes, and propose focused regression checks. Work read-only even if role instructions allow edits. Treat the fixture's assumptions as the entire relevant application context."
+  },
+  {
+    "id": "order_listing",
+    "fixture": "evaluation/fixtures/order_listing.rb",
+    "role": "templates/agents/quality_investigator.md",
+    "request": "Review this order listing endpoint before release. Identify concrete defects affecting its performance or stated response contract, explain the smallest fixes, and propose focused regression checks. Work read-only. Treat the fixture's assumptions as the entire relevant application context."
+  }
+]

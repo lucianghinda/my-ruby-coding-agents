@@ -1,4 +1,4 @@
-## Unreleased
+## [0.3.0] - 2026-10-31
 
 - Resolve advisor Git exclusions in linked worktrees and preserve existing
   exclusion entries without a trailing newline.
@@ -8,6 +8,7 @@
   the advisor's restricted tools.
 - Add focused Rails risk checks to existing implementation, test, quality,
   and security roles, with version and adapter checks.
+- Bump the advisor plugin to 0.1.1 so Codex refreshes its cached copy.
 - Add three static Rails review tasks and retain measured plain-prompt versus
   role-template results, scoring criteria, and raw responses.
 
