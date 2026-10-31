@@ -1,3 +1,16 @@
+## Unreleased
+
+- Resolve advisor Git exclusions in linked worktrees and preserve existing
+  exclusion entries without a trailing newline.
+- Track shell tools as potential advisor edits, match advisor identities
+  exactly (including plugin namespaces), and recover from malformed state.
+- Make supplied history evidence explicit in advisor briefings while keeping
+  the advisor's restricted tools.
+- Add focused Rails risk checks to existing implementation, test, quality,
+  and security roles, with version and adapter checks.
+- Add three static Rails review tasks and retain measured plain-prompt versus
+  role-template results, scoring criteria, and raw responses.
+
 ## [0.2.0] - 2026-10-31
 
 - Add `code_archaeologist`, which researches part of a codebase and keeps
@@ -12,6 +25,9 @@
 - Add `plugins/advisor`, a plugin for Claude Code and Codex with an `/advisor`
   skill, hooks, and a briefing template, so the lead consults the advisor at
   checkpoints and gets a nudge when it declares work done without one.
+- Add `install --advisor`, which runs each tool's plugin commands to install the
+  advisor plugin from this repository, and `--advisor-source` to point at a
+  local checkout instead.
 
 ## [0.1.0] - 2026-10-30
 

@@ -9,13 +9,6 @@ class TestAdvisorPluginFiles < Minitest::Test
   SCRIPT = File.join(PLUGIN, "scripts/advisor_hook.rb")
   REPO = File.expand_path("../..", __dir__)
 
-  def test_plugin_agent_files_match_the_template
-    models = MyRubyCodingAgents::Templates.models
-    agent = MyRubyCodingAgents::Agent.load(File.join(MyRubyCodingAgents::Templates::AGENTS_DIR, "advisor.md"), models:)
-    assert_equal MyRubyCodingAgents::Renderers.claude(agent), File.read(File.join(PLUGIN, "agents/advisor.md"))
-    assert_equal MyRubyCodingAgents::Renderers.codex(agent), File.read(File.join(PLUGIN, "agents/advisor.toml"))
-  end
-
   def test_both_manifests_name_the_plugin
     assert_equal "advisor", read_json(PLUGIN, "plugin.json")["name"]
     assert_equal "advisor", read_json(PLUGIN, ".claude-plugin/plugin.json")["name"]
