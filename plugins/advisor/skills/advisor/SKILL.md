@@ -48,14 +48,14 @@ Limits: no routine consults, at most one consult per checkpoint, and about four 
 
 ## Briefing
 
-Write the briefing from `references/briefing-template.md` next to this file. Include the user's request verbatim, what happened so far, verbatim evidence, the git state, numbered questions, and what you need back. Redact secrets.
+Write the briefing from `references/briefing-template.md` next to this file. Include the user's request verbatim, what happened so far, verbatim evidence, the git state, numbered questions, and what you need back. When history matters, retrieve the relevant Git command output and commit SHAs for the advisor; it must label history as supplied evidence and leave shell commands to the lead. Redact secrets.
 
 ## Consulting
 
 - **Claude Code:** call the `advisor` subagent with the Agent tool in the foreground and wait for the result. If `advisor_agent_id` in the state file is set, send the briefing to that id with SendMessage so the advisor keeps its context, and send a delta briefing. If that fails, start a fresh advisor.
 - **Codex:** ask Codex to have the `advisor` agent read the briefing and wait for its answer. Codex does not resume a finished subagent, so put the previous verdict in the `Previous consult` section of the briefing.
 
-The subagent itself is installed separately: the plugin ships `agents/advisor.md` for Claude Code, and Codex loads `.codex/agents/advisor.toml`, which `my-ruby-coding-agents install` writes. If the `advisor` agent is not available, tell the user once and continue without it.
+The subagent itself is not in this plugin. `my-ruby-coding-agents install` writes it to `.claude/agents/advisor.md` and `.codex/agents/advisor.toml`. If the `advisor` agent is not available, tell the user once and continue without it.
 
 ## Using the verdict
 
@@ -75,7 +75,7 @@ Keep the full response out of chat unless the user asks for it.
 
 ## End-of-turn nudge
 
-When files changed in a turn without a consult, a stop hook posts a message starting with `[Advisor]`. Respond by running the pre-completion checkpoint, or by stating in one line starting with `Advisor:` why it is not needed. The nudge fires at most once per batch of edits and stays quiet when you ended the turn with a question.
+After an editing tool or shell tool runs without a consult, a stop hook posts a message starting with `[Advisor]`. Shell calls are conservatively treated as potential edits, including read-only commands. Respond by running the pre-completion checkpoint, or by stating in one line starting with `Advisor:` why it is not needed. The nudge fires at most once per pending batch and stays quiet when you ended the turn with a question. It is a reminder, not proof that all edits were reviewed; it depends on the host delivering matching hook events.
 
 ## Rules
 

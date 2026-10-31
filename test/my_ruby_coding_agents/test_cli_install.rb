@@ -79,6 +79,38 @@ class TestCLIInstall < Minitest::Test
     refute_includes out, ".claude/"
   end
 
+  def test_advisor_flag_runs_plugin_commands_after_the_install
+    calls = []
+    runner = ->(argv, dir) { calls << [argv, dir] && ["done", true] }
+    code, out, = run_cli("install", @dir, "--claude", "--advisor", plugin_runner: runner)
+    assert_equal 0, code
+    assert_includes out, "write .claude/agents/advisor.md"
+    assert_equal [%w[claude plugin marketplace add lucianghinda/my-ruby-coding-agents],
+                  %w[claude plugin install advisor@my-ruby-coding-agents --scope project]], calls.map(&:first)
+    assert_equal([File.realpath(@dir)] * 2, calls.map { |_, dir| File.realpath(dir) })
+  end
+
+  def test_advisor_source_overrides_the_marketplace_source_and_dry_run_only_prints
+    calls = []
+    runner = ->(argv, _dir) { calls << argv }
+    code, out, = run_cli("install", @dir, "--codex", "--advisor", "--advisor-source", "/tmp/co", "--dry-run",
+                         plugin_runner: runner)
+    assert_equal 0, code
+    assert_includes out, "would run codex plugin marketplace add /tmp/co"
+    assert_empty calls
+  end
+
+  def test_advisor_flag_exits_one_when_a_plugin_command_fails
+    code, out, = run_cli("install", @dir, "--advisor", plugin_runner: ->(_argv, _dir) { ["no network", false] })
+    assert_equal 1, code
+    assert_includes out, "failed: codex plugin marketplace add"
+  end
+
+  def test_install_without_advisor_flag_runs_no_plugin_commands
+    code, = run_cli("install", @dir, plugin_runner: ->(_argv, _dir) { flunk "must not run" })
+    assert_equal 0, code
+  end
+
   private
 
   def codex_explorer_path = File.join(@dir, ".codex/agents/rails_explorer.toml")

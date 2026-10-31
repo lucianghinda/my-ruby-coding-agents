@@ -3,6 +3,8 @@ README.md,File,README.md
 CHANGELOG.md,File,CHANGELOG.md
 MyRubyCodingAgents,Module,MyRubyCodingAgents.md
 MyRubyCodingAgents.VERSION,Constant,MyRubyCodingAgents.md#constant-VERSION
+MyRubyCodingAgents::CLIHelp,Module,MyRubyCodingAgents/CLIHelp.md
+MyRubyCodingAgents::CLIHelp.TEXT,Constant,MyRubyCodingAgents/CLIHelp.md#constant-TEXT
 MyRubyCodingAgents::Generated,Module,MyRubyCodingAgents/Generated.md
 MyRubyCodingAgents::Generated.NAME,Constant,MyRubyCodingAgents/Generated.md#constant-NAME
 MyRubyCodingAgents::Generated.MARKER,Constant,MyRubyCodingAgents/Generated.md#constant-MARKER
@@ -85,3 +87,11 @@ MyRubyCodingAgents::Installer.CLEAN_STATES,Constant,MyRubyCodingAgents/Installer
 MyRubyCodingAgents::Installer.initialize,Method,MyRubyCodingAgents/Installer.md#method-i-initialize
 MyRubyCodingAgents::Installer.install,Method,MyRubyCodingAgents/Installer.md#method-i-install
 MyRubyCodingAgents::Installer.status,Method,MyRubyCodingAgents/Installer.md#method-i-status
+MyRubyCodingAgents::PluginInstaller,Class,MyRubyCodingAgents/PluginInstaller.md
+MyRubyCodingAgents::PluginInstaller.MARKETPLACE,Constant,MyRubyCodingAgents/PluginInstaller.md#constant-MARKETPLACE
+MyRubyCodingAgents::PluginInstaller.PLUGIN,Constant,MyRubyCodingAgents/PluginInstaller.md#constant-PLUGIN
+MyRubyCodingAgents::PluginInstaller.DEFAULT_SOURCE,Constant,MyRubyCodingAgents/PluginInstaller.md#constant-DEFAULT_SOURCE
+MyRubyCodingAgents::PluginInstaller.COMMANDS,Constant,MyRubyCodingAgents/PluginInstaller.md#constant-COMMANDS
+MyRubyCodingAgents::PluginInstaller.DEFAULT_RUNNER,Constant,MyRubyCodingAgents/PluginInstaller.md#constant-DEFAULT_RUNNER
+MyRubyCodingAgents::PluginInstaller.initialize,Method,MyRubyCodingAgents/PluginInstaller.md#method-i-initialize
+MyRubyCodingAgents::PluginInstaller.install,Method,MyRubyCodingAgents/PluginInstaller.md#method-i-install

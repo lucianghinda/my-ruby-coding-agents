@@ -172,6 +172,23 @@ Model assignments are starting points, not benchmark-proven rankings. The lead
 narrows ambiguous or unsuccessful tasks or uses a stronger available model;
 there is no automatic model router.
 
+### Rails risk checks and evaluation
+
+The existing implementation, test, quality, and security roles include focused
+Rails checks for query growth, stable pagination, tenant-scoped lookups,
+server-owned parameters, retryable jobs, external side effects, and migration
+rollout safety. They apply only to the changed behavior and require evidence of
+the project's Rails version, database, and queue adapter. The fuller checklist
+and official guide links are in [Rails risk checks](docs/rails-risk-checklists.md).
+
+The [Rails review pilot](evaluation/README.md) compares plain prompts with the
+role templates on three deliberately faulty Rails excerpts. It retains the
+tasks, scoring rubric, raw responses, and measured results. It measures static
+defect detection, not implementation success or general productivity; the same
+Luna model is used in both conditions to isolate the template content. The
+[first results](evaluation/results/2026-10-31/README.md) found all six seeded
+defects in both conditions, with no observed detection improvement.
+
 ## Plugins
 
 `plugins/advisor` is a plugin for Claude Code and Codex that turns the `advisor`
@@ -179,9 +196,35 @@ agent into a workflow. With `/advisor` on, the lead agent writes a briefing and
 consults the advisor at four checkpoints: before a major decision, when stuck,
 before declaring a change done, and on request. Hooks mark pending edits, log
 each consult to `.advisor/log.md`, and nudge once when a turn ends with edits
-nobody consulted on. See [plugins/advisor/README.md](plugins/advisor/README.md)
-for install steps. `bundle exec rake plugins` re-renders the plugin's agent
-files from `templates/agents/advisor.md`.
+nobody consulted on.
+
+Install it together with the agents:
+
+```sh
+my-ruby-coding-agents install ./my-app --advisor
+```
+
+After the usual file writes, `--advisor` runs each selected tool's own plugin
+commands with this repository as the marketplace:
+
+```sh
+codex plugin marketplace add lucianghinda/my-ruby-coding-agents
+codex plugin add advisor@my-ruby-coding-agents
+claude plugin marketplace add lucianghinda/my-ruby-coding-agents
+claude plugin install advisor@my-ruby-coding-agents --scope project
+```
+
+Both tools accept these commands again on later runs. Claude Code records
+the plugin in the project's `.claude/settings.json`; Codex enables it in
+`~/.codex/config.toml` and caches a copy. A tool missing from `PATH` is
+skipped. A failed command stops that tool and makes `install` exit 1.
+`--dry-run` prints the commands without running them. Use
+`--advisor-source` to point at a checkout of this repository instead of
+GitHub, for example while developing the plugin.
+
+The plugin carries the skill and the hooks. The `advisor` agent itself comes
+from the regular install, so `--advisor` needs the agents installed too. See
+[plugins/advisor/README.md](plugins/advisor/README.md) for the details.
 
 ## Development
 

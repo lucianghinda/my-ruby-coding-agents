@@ -5,14 +5,16 @@ require "optparse"
 module MyRubyCodingAgents
   # Handles the command line interface for installing, checking, and listing agents.
   class CLI
-    def self.run(argv, out: $stdout, err: $stderr)
-      new(argv, out:, err:).run
+    # plugin_runner runs the plugin commands for install --advisor.
+    def self.run(argv, out: $stdout, err: $stderr, plugin_runner: PluginInstaller::DEFAULT_RUNNER)
+      new(argv, out:, err:, plugin_runner:).run
     end
 
-    def initialize(argv, out:, err:)
+    def initialize(argv, out:, err:, plugin_runner:)
       @argv = argv.dup
       @out = out
       @err = err
+      @plugin_runner = plugin_runner
     end
 
     def run
@@ -41,12 +43,15 @@ module MyRubyCodingAgents
       2
     end
 
+    # Exit 1 when a plugin command fails.
     def install
       options = parse_options("install")
       return 0 if options[:help]
 
       installer(options).install(force: options[:force], dry_run: options[:dry_run], out: @out)
-      0
+      return 0 unless options[:advisor]
+
+      plugin_installer(options).install(out: @out, dry_run: options[:dry_run]) ? 0 : 1
     end
 
     # Exit 0 when every planned file is up to date, 1 otherwise.
@@ -58,7 +63,8 @@ module MyRubyCodingAgents
     end
 
     def parse_options(command)
-      options = { targets: [], force: false, dry_run: false, help: false }
+      options = { targets: [], force: false, dry_run: false, help: false, advisor: false,
+                  advisor_source: PluginInstaller::DEFAULT_SOURCE }
       option_parser(command, options).parse!(@argv)
       raise OptionParser::InvalidArgument, "expected at most one target directory" if @argv.length > 1
 
@@ -79,6 +85,10 @@ module MyRubyCodingAgents
     def add_install_options(opts, options)
       opts.on("--force", "Overwrite agent files, including edited ones") { options[:force] = true }
       opts.on("--dry-run", "Show planned writes without changing files") { options[:dry_run] = true }
+      opts.on("--advisor", "Also install the advisor plugin with each tool's plugin commands") do
+        options[:advisor] = true
+      end
+      opts.on("--advisor-source SOURCE", "Marketplace source for --advisor") { |src| options[:advisor_source] = src }
     end
 
     def show_help(opts, options)
@@ -93,6 +103,11 @@ module MyRubyCodingAgents
                     targets: options[:targets])
     end
 
+    def plugin_installer(options)
+      PluginInstaller.new(dir: @argv.first || ".", targets: options[:targets], source: options[:advisor_source],
+                          runner: @plugin_runner)
+    end
+
     def list
       Templates.agents(Templates.models).each { |agent| @out.puts(list_line(agent)) }
       0
@@ -104,26 +119,7 @@ module MyRubyCodingAgents
     end
 
     def help
-      <<~HELP
-        Usage: my-ruby-coding-agents <command> [options]
-
-        Commands:
-          install [DIR]  Install or refresh agents and delegation instructions (default DIR: .)
-          status [DIR]   Show which files are missing, outdated, edited, or up to date
-          list           List bundled agents
-
-        Options:
-          --codex        Use Codex files only
-          --claude       Use Claude Code files only
-          --force        install: overwrite agent files, including edited ones
-          --dry-run      install: show planned writes without changing files
-          -v, --version  Show version
-          -h, --help     Show this help
-
-        install writes missing files and refreshes generated agent files nobody
-        edited. It skips edited agent files unless --force is given.
-        status exits 0 when everything is up to date and 1 otherwise.
-      HELP
+      CLIHelp::TEXT
     end
   end
 end
