@@ -8,6 +8,8 @@ The plugin has three parts:
 - The `advisor` subagent is not in the plugin. `my-ruby-coding-agents install` writes it to `.claude/agents/advisor.md` and `.codex/agents/advisor.toml` from the gem's `templates/agents/advisor.md`.
 - `hooks/hooks.json` and `scripts/advisor_hook.rb`: four hooks that give the skill memory and a reminder. `SessionStart` tells the model the mode is on, `PostToolUse` marks pending edits, `SubagentStop` logs each consult, and `Stop` nudges once when a turn ends with unreviewed edits.
 
+Shell tools are tracked conservatively because a shell command can change files without an edit tool; read-only shell commands can therefore also trigger the reminder. Git exclusions are resolved through `git rev-parse`, which supports linked worktrees. If Git is unavailable or the directory is not a repository, the mode still works but `.advisor/` is not automatically excluded. Live hook behavior depends on the host application's hook support and was not integration-tested here.
+
 The hook script needs `ruby` on PATH and uses only the standard library.
 
 ## Commands
@@ -20,7 +22,7 @@ The hook script needs `ruby` on PATH and uses only the standard library.
 | `/advisor ask <question>` | Consult now |
 | `/advisor nudge off` | Disable the end-of-turn reminder |
 
-State lives in `.advisor/` in the project. Enabling the mode adds that folder to `.git/info/exclude`. The folder is safe to delete.
+State lives in `.advisor/` in the project. Enabling the mode adds that folder to Git's resolved `info/exclude` file, including in linked worktrees. The folder is safe to delete. History-dependent briefings must include the lead's Git output: the advisor labels it as supplied evidence and leaves shell commands to the lead.
 
 ## Install
 

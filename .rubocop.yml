@@ -3,6 +3,8 @@ AllCops:
   Exclude:
     - bin/**/*
     - vendor/**/*
+    # Preserve the deliberately faulty, line-referenced evaluation inputs.
+    - evaluation/fixtures/**/*
 
 Style/StringLiterals:
   EnforcedStyle: double_quotes

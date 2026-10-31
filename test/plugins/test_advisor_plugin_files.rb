@@ -21,6 +21,16 @@ class TestAdvisorPluginFiles < Minitest::Test
     commands.each { |command| assert_includes command, "${CLAUDE_PLUGIN_ROOT}/scripts/advisor_hook.rb" }
   end
 
+  def test_post_tool_hook_tracks_shell_commands_conservatively
+    hooks = read_json(PLUGIN, "hooks/hooks.json")["hooks"]
+    matcher = Regexp.new(hooks.fetch("PostToolUse").first.fetch("matcher"))
+    %w[Edit Write apply_patch Bash exec_command functions.exec_command mcp__functions__exec].each do |tool|
+      assert_match matcher, tool
+    end
+    refute_match matcher, "Read"
+    refute_match matcher, "Grep"
+  end
+
   def test_marketplaces_point_at_the_plugin
     assert_equal "./plugins/advisor", read_json(REPO, ".claude-plugin/marketplace.json")["plugins"][0]["source"]
     assert_equal "./plugins/advisor",

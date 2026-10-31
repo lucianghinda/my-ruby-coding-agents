@@ -172,6 +172,23 @@ Model assignments are starting points, not benchmark-proven rankings. The lead
 narrows ambiguous or unsuccessful tasks or uses a stronger available model;
 there is no automatic model router.
 
+### Rails risk checks and evaluation
+
+The existing implementation, test, quality, and security roles include focused
+Rails checks for query growth, stable pagination, tenant-scoped lookups,
+server-owned parameters, retryable jobs, external side effects, and migration
+rollout safety. They apply only to the changed behavior and require evidence of
+the project's Rails version, database, and queue adapter. The fuller checklist
+and official guide links are in [Rails risk checks](docs/rails-risk-checklists.md).
+
+The [Rails review pilot](evaluation/README.md) compares plain prompts with the
+role templates on three deliberately faulty Rails excerpts. It retains the
+tasks, scoring rubric, raw responses, and measured results. It measures static
+defect detection, not implementation success or general productivity; the same
+Luna model is used in both conditions to isolate the template content. The
+[first results](evaluation/results/2026-10-31/README.md) found all six seeded
+defects in both conditions, with no observed detection improvement.
+
 ## Plugins
 
 `plugins/advisor` is a plugin for Claude Code and Codex that turns the `advisor`

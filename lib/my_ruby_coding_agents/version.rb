@@ -2,5 +2,5 @@
 
 module MyRubyCodingAgents
   # Gem version. Bump before each release and add a CHANGELOG entry.
-  VERSION = "0.2.0"
+  VERSION = "0.3.0"
 end

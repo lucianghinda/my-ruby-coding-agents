@@ -18,6 +18,8 @@ A short chronological account: what you investigated, decided, changed, tried, a
 
 Relevant tool output, verbatim: errors, stack traces, test output, command output, diff hunks. Trim unrelated parts and mark the cuts with `[...]`. Redact tokens, keys, and `.env` values.
 
+When a claim depends on history, include the relevant `git log`, `git show`, or `git blame` output with commit SHAs and the exact command. History retrieval belongs to the lead, so the advisor can work with its restricted Claude tools and without running shell commands in either host. Distinguish supplied excerpts from files it can inspect itself. Write `history not relevant` when no question depends on it.
+
 ## Current state
 
 The output of `git status --short` and `git diff --stat`, the files you touched, and any half-done work.

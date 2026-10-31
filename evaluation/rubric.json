@@ -1,0 +1,14 @@
+{
+  "tenant_documents": [
+    { "id": "unscoped_read", "criterion": "Identifies show's global Document.find as a cross-account read and proposes an account-scoped lookup." },
+    { "id": "account_reassignment", "criterion": "Identifies permitted account_id as a cross-account reassignment path and proposes removing client control over ownership." }
+  ],
+  "invoice_job": [
+    { "id": "duplicate_charge", "criterion": "Identifies duplicate charges on retry/redelivery or concurrent execution and proposes a stable provider idempotency key; a database lock alone is insufficient after provider success plus database failure." },
+    { "id": "swallowed_timeout", "criterion": "Identifies the local timeout rescue as preventing retry_on and proposes letting the timeout propagate or re-raising it after logging." }
+  ],
+  "order_listing": [
+    { "id": "query_growth", "criterion": "Identifies per-order queries for customer access AND line_items.count, with fixes for both; includes alone does not fix count's per-order SQL." },
+    { "id": "unstable_pages", "criterion": "Identifies created_at ties as nondeterministic page membership and proposes a unique ordering tie-breaker such as id." }
+  ]
+}

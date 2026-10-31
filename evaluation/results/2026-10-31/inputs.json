@@ -1,0 +1,13 @@
+{
+  "algorithm": "SHA-256",
+  "files": {
+    "evaluation/fixtures/invoice_job.rb": "b2e8a7e44b4d8b5faa9876268d128672a82e33ca7824d96a480d3fc1101ffe1b",
+    "evaluation/fixtures/order_listing.rb": "bf4c8fd3ba85475891b2d71eb8076d4900f3cf28c4b004b3008db3ecef7f27b8",
+    "evaluation/fixtures/tenant_documents.rb": "ce3179bec900916a0608167c6ad3bc5f9cab5a877fff7d4d0c6263c657590a09",
+    "evaluation/rubric.json": "092e6e3f63cd37116b36260bba9a4cefa10f4927f4b7314026dc198d2d98ca56",
+    "evaluation/tasks.json": "5ad56eee8ebca87cd3fe6c6d20a18034bc979b8d5500b40e380d9b4af9c0c66b",
+    "templates/agents/quality_investigator.md": "5cbb9ce084fe016635b381f360da5cf0e3e4b4b92daf8fcc36e157571ac399a7",
+    "templates/agents/rails_implementer.md": "1466c8d998eec46aef678d1a16dfeab0196fb4090bc4973f0fdf1da650857b5b",
+    "templates/agents/security_reviewer.md": "32d94776fd08086da13ca8a57c1526ffb2a0db4d5c6e1c497343397d61f1aada"
+  }
+}
