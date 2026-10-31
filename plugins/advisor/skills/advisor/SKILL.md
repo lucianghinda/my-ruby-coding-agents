@@ -48,7 +48,7 @@ Limits: no routine consults, at most one consult per checkpoint, and about four 
 
 ## Briefing
 
-Write the briefing from `references/briefing-template.md` next to this file. Include the user's request verbatim, what happened so far, verbatim evidence, the git state, numbered questions, and what you need back. When history matters, retrieve the relevant Git command output and commit SHAs for the advisor; it must label history as supplied evidence and leave shell commands to the lead. Redact secrets.
+Write the briefing from `references/briefing-template.md` next to this file. Include the user's request verbatim, what happened so far, verbatim evidence, the git state, numbered questions, and what you need back. Redact secrets.
 
 ## Consulting
 
@@ -75,7 +75,7 @@ Keep the full response out of chat unless the user asks for it.
 
 ## End-of-turn nudge
 
-After an editing tool or shell tool runs without a consult, a stop hook posts a message starting with `[Advisor]`. Shell calls are conservatively treated as potential edits, including read-only commands. Respond by running the pre-completion checkpoint, or by stating in one line starting with `Advisor:` why it is not needed. The nudge fires at most once per pending batch and stays quiet when you ended the turn with a question. It is a reminder, not proof that all edits were reviewed; it depends on the host delivering matching hook events.
+When files changed in a turn without a consult, a stop hook posts a message starting with `[Advisor]`. Respond by running the pre-completion checkpoint, or by stating in one line starting with `Advisor:` why it is not needed. The nudge fires at most once per batch of edits and stays quiet when you ended the turn with a question.
 
 ## Rules
 
